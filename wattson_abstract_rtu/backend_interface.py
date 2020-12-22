@@ -48,7 +48,7 @@ class BackendInterface(abc.ABC):
         self.coa = coa
         self.data_store = {}
         self.datapoints = set()
-        self.callback = None
+        self.callback = callback
 
         # throws away all msgs but cleans up code because there is no need to always check for
         # the existence of a logger
