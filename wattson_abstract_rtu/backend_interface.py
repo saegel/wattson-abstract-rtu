@@ -83,13 +83,13 @@ class BackendInterface(abc.ABC):
         if autostart:
             self.wait_until_ready()
 
-    def get_IO(self, coa: COA, ioa: IOA, cot: int = 0, type_id: int = 0):
+    def get_IO(self, coa: COA, ioa: IOA, cot: int = 0, typeID: int = 0):
         """
         Retrieves the IO from an attached datapoint.
         :param coa: The COA for the requested Information Object
         :param ioa: The IOA for the requested Information Object
         :param cot: 0 -> choose default value initialised with
-        :param type_id: != 0 -> check if returned IO is equal to allowed IOs for this ASDU typeID
+        :param typeID: != 0 -> check if returned IO is equal to allowed IOs for this ASDU typeID
         :return: None if the datapoint is not attached or the typeID doesn't match the expected
             for a datapoint, otherwise query result
         """
@@ -97,11 +97,11 @@ class BackendInterface(abc.ABC):
             self.logger.warning(f"tried to get IO for unattached datapoint with ioa {ioa} and coa {coa}")
             return None
 
-        if not self._valid_typeID(coa, ioa, type_id):
+        if not self._valid_typeID(coa, ioa, typeID):
             stored_typeID = self.get_data_point(coa, ioa)[2]
             self.logger.warning(f"Tried sending a get-IO query with invalid command-query-ID "
-                                f"{type_id} to dp with (coa, ioa) ({coa}, {ioa})."
-                                f" Expecting type_id {stored_typeID} for command-queries to this dp."
+                                f"{typeID} to dp with (coa, ioa) ({coa}, {ioa})."
+                                f" Expecting typeID {stored_typeID} for command-queries to this dp."
                                 f" Not sending this query.")
             return None
 
@@ -111,13 +111,13 @@ class BackendInterface(abc.ABC):
         if res is None:
             self.logger.warning(f"Retrieving IO for attached datapoint with (coa, ioa, cot) "
                                  f"({coa}, {ioa}, {cot}) failed!")
-        elif type_id in typeID_to_permitted_IOs \
-                and res not in typeID_to_permitted_IOs[type_id]:
-            # default type_id 0 not allowed for ASDUs -> never in type_ID_to...
+        elif typeID in typeID_to_permitted_IOs \
+                and res not in typeID_to_permitted_IOs[typeID]:
+            # default typeID 0 not allowed for ASDUs -> never in type_ID_to...
 
             self.logger.warning(f"Retrieved IO with invalid value {res} "
-                                    f"for type_id {type_id} from dp with (coa, ioa) ({coa}, {ioa})."
-                                    f"Expecting value in {typeID_to_permitted_IOs[type_id]}.")
+                                    f"for typeID {typeID} from dp with (coa, ioa) ({coa}, {ioa})."
+                                    f"Expecting value in {typeID_to_permitted_IOs[typeID]}.")
         else:
             self.logger.debug(f"Send query {query} to datapoint with (coa, ioa, cot): "
                               f"({coa}, {ioa}, {cot}) and result {res}")
@@ -132,12 +132,12 @@ class BackendInterface(abc.ABC):
         :param coa: The COA for the Information Object to be set
         :param ioa: The IOA for the Information Object to be set
         :param cot: if 0, send query with cot this datapoint was initialised with
-        :param typeID: if != 0 & command-query-type_id, check if this type_id is allowed
+        :param typeID: if != 0 & command-query-typeID, check if this typeID is allowed
                 fot this dp.
         :return: None if datapoint identified by coa-ioa is not attached to this RTU
-                or the type_id is not allowed for this datapoint,
+                or the typeID is not allowed for this datapoint,
                 True/False depending on success of sending the query.
-        Allows, but logs warning if an dp is set to a value invalid for this type_id
+        Allows, but logs warning if an dp is set to a value invalid for this typeID
         """
 
         if not self.has_IO(coa, ioa):
@@ -149,17 +149,17 @@ class BackendInterface(abc.ABC):
             cot = stored_cot
         if not self._valid_typeID(coa, ioa, typeID):
             stored_typeID = self.get_data_point(coa, ioa)[2]
-            self.logger.warning(f"Tried to send a set-IO query with invalid command-query-type_id "
+            self.logger.warning(f"Tried to send a set-IO query with invalid command-query-typeID "
                                 f"{typeID} to dp with (coa, ioa) ({coa}, {ioa})."
-                                f"Expecting type_id {stored_typeID} for command-queries to this dp."
+                                f"Expecting typeID {stored_typeID} for command-queries to this dp."
                                 f"Not sending the query.")
-            # only allow queries if they have the type_id dp allows just this command
+            # only allow queries if they have the typeID dp allows just this command
             return None
 
         if typeID in typeID_to_permitted_IOs \
                 and value not in typeID_to_permitted_IOs[typeID]:
             self.logger.warning(f"Sending a set-IO query to with invalid value {value} "
-                                f"for type_id {typeID} to dp with (coa, ioa) ({coa}, {ioa})."
+                                f"for typeID {typeID} to dp with (coa, ioa) ({coa}, {ioa})."
                                 f"Expecting value in {typeID_to_permitted_IOs[typeID]}.")
 
         query = self._build_IO_query(coa, ioa, cot, value)
@@ -335,9 +335,9 @@ class BackendInterface(abc.ABC):
         """
         :return:
             None: dp not attached to RTU
-            0: type_id handed over or stored for the dp not a command-query-type_id (45-69)
-            True: type_id and stored dp-type_id equal command-query-type_id
-            False: type_id and stored dp-type_id unequal command-query-type_id
+            0: typeID handed over or stored for the dp not a command-query-typeID (45-69)
+            True: typeID and stored dp-typeID equal command-query-typeID
+            False: typeID and stored dp-typeID unequal command-query-typeID
         if a command query with the given cot is allowed for this datapoint
         """
         dp = self.get_data_point(coa, ioa)
