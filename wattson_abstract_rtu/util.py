@@ -2,7 +2,7 @@ from typing import Union
 COA = Union[int, str]
 IOA = Union[int, str]
 
-control_direction_processinfo_typeIDs = range(45,70)
+control_direction_processinfo_type_ids = range(45,70)
 
 def check_pkg(name):
     from pip._internal.utils.misc import get_installed_distributions
@@ -12,7 +12,7 @@ def check_pkg(name):
 FCS_installed = check_pkg("FCS")
 
 # key = ASDU type ID; value = permitted IO values set to/ returned
-typeID_to_permitted_IOs  = {
+type_id_to_permitted_IOs  = {
     1: (0, 1),
     2: (0, 1),
     30: (0, 1),

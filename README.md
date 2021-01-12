@@ -85,28 +85,28 @@ The RTU backend pre-defines these functions:
         with the same coa and stored relation-ship.
     - raises a `RuntimeError` if an invalid relationship is found
         
-4.  `_invalid_typeID(self, coa: COA, ioa: IOA, typeID: int) -> Union[bool, None, int]`
-     - checks if the typeID-argument and the datapoint's default typeID are command-query typeIDs (in [45,69])
-     - if True, returns `defaultTypeID == typeID` 
+4.  `_invalid_type_id(self, coa: COA, ioa: IOA, type_id: int) -> Union[bool, None, int]`
+     - checks if the type_id-argument and the datapoint's default type_id are command-query type_ids (in [45,69])
+     - if True, returns `defaulttype_id == type_id` 
      - reasoning: restrict allowed command-queries to those specified by the datapoint
      - returns `None` for unattached datapoint
-     - returns `0` if either the handed over typeID or the typeID stored for the datapoint
-        are not command-query-typeIDs 
+     - returns `0` if either the handed over type_id or the type_id stored for the datapoint
+        are not command-query-type_ids 
         
-5. `get_IO(self, coa: COA, ioa: IOA, cot: int=0, typeID: int=0) -> Any`
+5. `get_IO(self, coa: COA, ioa: IOA, cot: int=0, type_id: int=0) -> Any`
     - retrieve the IO based on the coa-ioa combination
     - returns `None` if the RTU has no such datapoint with a resp. IO attached to it or
-        a typeID != 0 is given and which is invalid for this datapoint
+        a type_id != 0 is given and which is invalid for this datapoint
     - if `cot==0`, chooses default cot stored
 
 6. `has_IO(self, coa: COA, ioa: IOA) -> bool`
     - check if an IO with the given coa-ioa combination is attached to the RTU
 
-7. `set_IO(self, coa: COA, ioa: IOA, value, cot: int=0, typeID: int=0) -> Union[bool, None]`
+7. `set_IO(self, coa: COA, ioa: IOA, value, cot: int=0, type_id: int=0) -> Union[bool, None]`
     - sets an IO on a datapoint
     - if `cot==0` build query with default cot
     - returns the model-dependent query response for attached datapoints and
-        `None` if the RTU does not know such an IO or typeID is given which is not valid for this datapoint
+        `None` if the RTU does not know such an IO or type_id is given which is not valid for this datapoint
          - resulting limitation: cannot differentiate between the return of a `None` query response and a 
             non-attached IO
 
@@ -205,8 +205,8 @@ The interface logs the following data:
     - sending the query for `set_IO`, `get_IO`, or or its related-datapoint versions on an attached datapoint failed for some other 
         reason
     - changing the cot for an unattached datapoint or trying to set it to an invalid value
-    - trying to set/get IOs with an invalid typeID for the given datapoint or if the corresponding
-        IO does not lie in the IEC104-range for this typeID
+    - trying to set/get IOs with an invalid type_id for the given datapoint or if the corresponding
+        IO does not lie in the IEC104-range for this type_id
 3. `INFO`
     - whenever the `self.started` status changes
     - time [s] it took to setup a client (if applicable)
